@@ -19,55 +19,35 @@ const gutil = require('gulp-util'),
     path = require('path'),
     del = require('del'),
     origin = "source/",
-    project = "../s-design/",
-    prefix = "";
+    project = "./",
+    prefix = "resource/";
 
 // const clean = async (done) => {
 //     await del([`${project}`]);
 //     done();
 // }
 
-const html = ()=> src([`${origin}**/*.html`, `!${origin}include/*.html`,`!${origin}map.html`])
+const html = ()=> src([`${origin}**/*.html`, `!${origin}**/include/*.html`])
     .pipe(newer(`${origin}**/*.html`))
-    // .pipe(fileinclude({
-    //     prefix: '@@',
-    //     basepath: `${origin}include`,
-    //     context: {
-    //         name: 'example'
-    //     }
-    // }))
     .pipe(htmlhint('hint/.htmlhintrc'))
-    // .pipe(data((file)=>{
-    //     return JSON.parse(fs.readFileSync(`${origin}json/default.json`))
-    // }))
-    // .pipe(data((file)=>{
-    //     try {
-    //         const ext = path.extname(file.path);
-    //         const jsonFile = file.path.split(`${origin}\\`)[1].split(ext)[0];
-    //         //html과 같은 경로와 같은 파일명으로 json파일을 넣으면 json데이터가 자동삽입됨
-    //         return JSON.parse(fs.readFileSync(`${origin}json/${jsonFile}.json`));
-    //     } catch(err){
-    //         return {}
-    //     }
-    // }))
     .pipe(template())
-    .pipe(dest(`${project}${prefix}`))
+    .pipe(dest(`${project}`))
     .pipe(browsersync.stream());
 
 
-const js = ()=> src(`${origin}/js/**/*.js`)
-    .pipe(newer(`${origin}/js/*.js`))
+const js = ()=> src(`${origin}**/js/*.js`)
+    .pipe(newer(`${origin}**/js/*.js`))
     .pipe(plumber({errorHandler : gutil.log}))
     .pipe(jshint())
     .pipe(babel({
         presets: ['@babel/env']
     }))
-    .pipe(dest(`${project}${prefix}/js`))
+    .pipe(dest(`${project}${prefix}`))
     .pipe(browsersync.stream());
 
 
-const css = () => src([`${origin}scss/**/*.{scss,sass,css}`,`!${origin}scss/mixin/*.{scss,sass}`])
-    .pipe(newer(`${origin}scss/**/*.{scss,sass,css}`))
+const css = () => src([`${origin}**/css/**/*.{scss,sass,css}`,`!${origin}**/css/mixin/*.{scss,sass}`])
+    .pipe(newer(`${origin}**/css/**/*.{scss,sass,css}`))
     // .pipe(sourcemaps.init())
     .pipe(sass.sync().on('error', sass.logError))
     // .pipe(sass().on('error', sass.logError))
@@ -78,14 +58,14 @@ const css = () => src([`${origin}scss/**/*.{scss,sass,css}`,`!${origin}scss/mixi
     }))
     // .pipe(sourcemaps.write())
     // .pipe(cssmin())
-    .pipe(dest(`${project}${prefix}/css`))
+    .pipe(dest(`${project}${prefix}`))
     .pipe(browsersync.stream());;
 
 const images = () => src([
-    `${origin}images/**/*.{gif,jpeg,jpg,png,svg}`,
+    `${origin}**/images/**/*.{gif,jpeg,jpg,png,svg}`,
 ])
-.pipe(newer(`${project}/images/**/*.{gif,jpeg,jpg,png,svg}`))
-.pipe(dest(`${project}${prefix}/images`))
+.pipe(newer(`${project}${prefix}**/*.{gif,jpeg,jpg,png,svg}`))
+.pipe(dest(`${project}${prefix}`))
 
 const browserSyncInit = (done)=>{
     browsersync.init({
@@ -105,7 +85,7 @@ const watcher = () => {
     watch([`${origin}**/*.html`, `${origin}json/**/*.json`], html).on('change', browsersync.reload);
     watch([`${origin}**/*.{scss,sass.css}`], css).on('change', browsersync.reload);
     watch([`${origin}**/*.js`], js).on('change', browsersync.reload);
-    watch([`${origin}images/**/*.{gif,jpeg,jpg,png,svg}`], images).on('change', browsersync.reload);
+    watch([`${origin}**/*.{gif,jpeg,jpg,png,svg}`], images).on('change', browsersync.reload);
 }
 
 exports.default = series(parallel(html, css, js, images));
