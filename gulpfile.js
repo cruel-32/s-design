@@ -19,7 +19,7 @@ const gutil = require('gulp-util'),
     path = require('path'),
     del = require('del'),
     origin = "source/",
-    project = "./",
+    project = "../s-design/",
     prefix = "";
 
 // const clean = async (done) => {
