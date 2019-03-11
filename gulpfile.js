@@ -12,7 +12,6 @@ const gutil = require('gulp-util'),
     jshint = require('gulp-jshint'),
     babel = require('gulp-babel'),
     browsersync = require("browser-sync").create(),
-    minify = require('gulp-minify'),
     merge = require('merge-stream'),
     data = require('gulp-data'),
     template = require('gulp-template'),
@@ -56,22 +55,14 @@ const html = ()=> src([`${origin}**/*.html`, `!${origin}include/*.html`,`!${orig
     .pipe(browsersync.stream());
 
 
-const js = ()=> src(`./${origin}**/*.js`)
-    .pipe(newer(`${origin}*.js`))
+const js = ()=> src(`${origin}/js/**/*.js`)
+    .pipe(newer(`${origin}/js/*.js`))
     .pipe(plumber({errorHandler : gutil.log}))
     .pipe(jshint())
     .pipe(babel({
         presets: ['@babel/env']
     }))
-    .pipe(minify({
-        ext: {
-            src:'-debug.js',
-            min: '.js'
-        },
-        // exclude: ['tasks'],
-        ignoreFiles: ['-min.js']
-    }))
-    .pipe(dest(`${project}${prefix}`))
+    .pipe(dest(`${project}${prefix}/js`))
     .pipe(browsersync.stream());
 
 
