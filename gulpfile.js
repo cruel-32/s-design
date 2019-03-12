@@ -19,8 +19,8 @@ const gutil = require('gulp-util'),
     path = require('path'),
     del = require('del'),
     origin = "source/",
-    project = "./",
-    prefix = "resource/";
+    project = "docs/",
+    prefix = "";
 
 // const clean = async (done) => {
 //     await del([`${project}`]);
